@@ -30,6 +30,33 @@ int willYouRaise( struct Game * game, struct Player * player, unsigned int total
 	{
 	case IK:
 	{
+		//settings 
+		int BetSeppe = 0;
+		int MaxBetSeppe = player->chips;
+		int EarlyPosition = game->playersSize - 6;
+		int MidPosition = game->playersSize - 2;
+		//starting hand evaluation
+		if(table [0]){
+			if (player->hand->cards[0]->suit == player->hand->cards[1]->suit )
+			{
+				/* code */
+			}
+			if (game->plays > EarlyPosition) 
+			{
+				
+			}
+			else if (game->plays > MidPosition) 
+			{
+				
+				
+			}
+			else 
+			{
+
+			}
+			
+		}
+
 		if( getMyHandRank( player->hand ).category == STRAIGHT_FLUSH )
 		{
 			return 10000;
@@ -180,3 +207,25 @@ int main( void )
 	printf( "The winner is %s with %d chips !", game.players[0]->name, game.players[0]->chips );
 	return 0;
 }
+/*case IK:
+	{
+		if( getMyHandRank( player->hand ).category == STRAIGHT_FLUSH )
+		{
+			return 10000;
+		}
+		if( game->plays > 10 && table[4] != nullptr ) //Play on river
+		{
+			PokerRank mijnHandRank = getMyHandRank( player->hand );
+			PokerRank tafelRank = getMyHandRank( nullptr );
+			if( mijnHandRank.category >= TWO_PAIR && mijnHandRank.category > tafelRank.category )
+			{
+				return( 20 - totalBet );
+			}
+		}
+		if( totalBet > game->blind * 5 )
+		{
+			return( -1 );
+		}
+		return( 0 );
+		break;
+	}*/
