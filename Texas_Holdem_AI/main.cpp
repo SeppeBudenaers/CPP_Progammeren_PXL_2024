@@ -52,6 +52,13 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 		//preflop
 		if (table[0])
 		{
+			int higher_card = 0;
+			int lower_card = 1;
+			if (player->hand->cards[0]->rank <= player->hand->cards[1]->rank){
+				higher_card = 1;
+				lower_card = 0;
+			}
+
 			//filtering hand combinations
 			if (player->hand->cards[0]->rank == player->hand->cards[1]->rank) //pair
 			{
@@ -70,178 +77,182 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 			}
 			else if (player->hand->cards[0]->suit == player->hand->cards[1]->suit) //suited
 			{
-				if (player->hand->cards[0]->rank == 14 || player->hand->cards[1]->rank == 14 )
+				switch (player->hand->cards[higher_card]->rank)
 				{
-					if ((player->hand->cards[0]->rank == 14 && player->hand->cards[1]->rank >= 10) || (player->hand->cards[1]->rank == 14 && player->hand->cards[0]->rank >= 10))
+				case 14:
+					if (player->hand->cards[lower_card]->rank >= 10)
 					{
 						HandSeppe = HIGH_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 14 && player->hand->cards[1]->rank >= 6) || (player->hand->cards[1]->rank == 14 && player->hand->cards[0]->rank >= 6))
+					else if (player->hand->cards[lower_card]->rank >= 6)
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 14 && player->hand->cards[1]->rank >= 2) || (player->hand->cards[1]->rank == 14 && player->hand->cards[0]->rank >= 2))
+					else if (player->hand->cards[lower_card]->rank >= 2)
 					{
 						HandSeppe = LOW_HAND;
 					}
-				}
-				else if (player->hand->cards[0]->rank == 13 || player->hand->cards[1]->rank == 13 )
-				{
-					if ((player->hand->cards[0]->rank == 13 && player->hand->cards[1]->rank >= 10) || (player->hand->cards[1]->rank == 13 && player->hand->cards[0]->rank >= 10))
+					break;
+				case 13:
+					if (player->hand->cards[lower_card]->rank >= 10)
 					{
 						HandSeppe = HIGH_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 13 && player->hand->cards[1]->rank >= 9) || (player->hand->cards[1]->rank == 13 && player->hand->cards[0]->rank >= 9))
+					else if (player->hand->cards[lower_card]->rank >= 9)
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 13 && player->hand->cards[1]->rank >= 2) || (player->hand->cards[1]->rank == 13 && player->hand->cards[0]->rank >= 2))
+					else if (player->hand->cards[lower_card]->rank >= 2)
 					{
 						HandSeppe = LOW_HAND;
 					}
-				}
-				else if (player->hand->cards[0]->rank == 12 || player->hand->cards[1]->rank == 12 )
-				{
-					if ((player->hand->cards[0]->rank == 12 && player->hand->cards[1]->rank >= 10) || (player->hand->cards[1]->rank == 12 && player->hand->cards[0]->rank >= 10))
+					break;
+				case 12:
+					if (player->hand->cards[lower_card]->rank >= 10)
 					{
 						HandSeppe = HIGH_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 12 && player->hand->cards[1]->rank >= 8) || (player->hand->cards[1]->rank == 12 && player->hand->cards[0]->rank >= 8))
+					else if (player->hand->cards[lower_card]->rank >= 8)
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
-				}
-				else if (player->hand->cards[0]->rank == 11 || player->hand->cards[1]->rank == 11 )
-				{
-					if ((player->hand->cards[0]->rank == 11 && player->hand->cards[1]->rank >= 9) || (player->hand->cards[1]->rank == 11 && player->hand->cards[0]->rank >= 9))
+					break;
+				case 11:
+					if (player->hand->cards[lower_card]->rank >= 10)
 					{
 						HandSeppe = HIGH_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 11 && player->hand->cards[1]->rank >= 8) || (player->hand->cards[1]->rank == 11 && player->hand->cards[0]->rank >= 8))
+					else if (player->hand->cards[lower_card]->rank >= 8)
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 11 && player->hand->cards[1]->rank >= 7) || (player->hand->cards[1]->rank == 11 && player->hand->cards[0]->rank >= 7))
+					else if (player->hand->cards[lower_card]->rank >= 7)
 					{
 						HandSeppe = LOW_HAND;
-					}
-				}
-				else if (player->hand->cards[0]->rank == 10 || player->hand->cards[1]->rank == 10 )
-				{
-					if ((player->hand->cards[0]->rank == 10 && player->hand->cards[1]->rank >= 9) || (player->hand->cards[1]->rank == 10 && player->hand->cards[0]->rank >= 9))
+					}	
+					break;
+				case 10:
+					if (player->hand->cards[lower_card]->rank >= 9)
 					{
 						HandSeppe = HIGH_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 10 && player->hand->cards[1]->rank >= 8) || (player->hand->cards[1]->rank == 10 && player->hand->cards[0]->rank >= 8))
+					else if (player->hand->cards[lower_card]->rank >= 8)
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 10 && player->hand->cards[1]->rank >= 6) || (player->hand->cards[1]->rank == 10 && player->hand->cards[0]->rank >= 6))
+					else if (player->hand->cards[lower_card]->rank >= 6)
 					{
 						HandSeppe = LOW_HAND;
-					}
-				}
-				else if (player->hand->cards[0]->rank == 9 || player->hand->cards[1]->rank == 9 )
-				{
-					if ((player->hand->cards[0]->rank == 9 && player->hand->cards[1]->rank >= 8) || (player->hand->cards[1]->rank == 9 && player->hand->cards[0]->rank >= 8))
+					}	
+					break;
+				case 9:
+					if (player->hand->cards[lower_card]->rank >= 8 )
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 9 && player->hand->cards[1]->rank >= 6) || (player->hand->cards[1]->rank == 9 && player->hand->cards[0]->rank >= 6))
+					else if (player->hand->cards[lower_card]->rank >= 6)
 					{
 						HandSeppe = LOW_HAND;
 					}
-				}
-				else if (player->hand->cards[0]->rank == 8 || player->hand->cards[1]->rank == 8 )
-				{
-					if ((player->hand->cards[0]->rank == 8 && player->hand->cards[1]->rank >= 6) || (player->hand->cards[1]->rank == 8 && player->hand->cards[0]->rank >= 6))
+					break;
+				case 8:
+					if (player->hand->cards[lower_card]->rank >= 6)
 					{
 						HandSeppe = LOW_HAND;
-					}
-				}
-				else if (player->hand->cards[0]->rank == 7 || player->hand->cards[1]->rank == 7 )
-				{
-					if ((player->hand->cards[0]->rank == 7 && player->hand->cards[1]->rank >= 5) || (player->hand->cards[1]->rank == 7 && player->hand->cards[0]->rank >= 5))
+					}	
+					break;
+				case 7:
+					if (player->hand->cards[lower_card]->rank >= 5)
 					{
 						HandSeppe = LOW_HAND;
-					}
-				}
-				else if ((player->hand->cards[0]->rank == 6 && player->hand->cards[1]->rank == 5 )|| (player->hand->cards[1]->rank == 6 && player->hand->cards[0]->rank == 5 ) )
-				{
-					HandSeppe = LOW_HAND;
+					}	
+					break;
+				case 6:
+					if (player->hand->cards[lower_card]->rank == 5)
+					{
+						HandSeppe = LOW_HAND;
+					}	
+					break;
+				case 5:
+					if (player->hand->cards[lower_card]->rank == 4)
+					{
+						HandSeppe = LOW_HAND;
+					}	
+					break;
+				default:
+					HandSeppe = UNPLAYABLE_HAND;
+					break;
 				}
 			}
 			else // not suited and no pair
 			{
-				if (player->hand->cards[0]->rank == 14 || player->hand->cards[1]->rank == 14 )
+				switch (player->hand->cards[higher_card]->rank)
 				{
-					if ((player->hand->cards[0]->rank == 14 && player->hand->cards[1]->rank >= 10) || (player->hand->cards[1]->rank == 14 && player->hand->cards[0]->rank >= 10))
+				case 14:
+					if (player->hand->cards[lower_card]->rank >= 10)
 					{
 						HandSeppe = HIGH_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 14 && player->hand->cards[1]->rank >= 7) || (player->hand->cards[1]->rank == 14 && player->hand->cards[0]->rank >= 7))
-					{
-						HandSeppe = MEDIUM_HAND;
-					}
-					else if ((player->hand->cards[0]->rank == 14 && player->hand->cards[1]->rank >= 2) || (player->hand->cards[1]->rank == 14 && player->hand->cards[0]->rank >= 2))
+					else if (player->hand->cards[lower_card]->rank >= 7)
 					{
 						HandSeppe = LOW_HAND;
 					}
-				}
-				else if (player->hand->cards[0]->rank == 13 || player->hand->cards[1]->rank == 13 )
-				{
-					if ((player->hand->cards[0]->rank == 13 && player->hand->cards[1]->rank >= 11) || (player->hand->cards[1]->rank == 13 && player->hand->cards[0]->rank >= 11))
+					break;
+				case 13:
+					if (player->hand->cards[lower_card]->rank >= 11)
 					{
 						HandSeppe = HIGH_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 13 && player->hand->cards[1]->rank >= 10) || (player->hand->cards[1]->rank == 13 && player->hand->cards[0]->rank >= 10))
+					else if (player->hand->cards[lower_card]->rank >= 10)
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 13 && player->hand->cards[1]->rank >= 9) || (player->hand->cards[1]->rank == 13 && player->hand->cards[0]->rank >= 9))
+					else if (player->hand->cards[lower_card]->rank >= 9)
 					{
 						HandSeppe = LOW_HAND;
 					}
-				}
-				else if (player->hand->cards[0]->rank == 12 || player->hand->cards[1]->rank == 12 )
-				{
-					if ((player->hand->cards[0]->rank == 12 && player->hand->cards[1]->rank >= 10) || (player->hand->cards[1]->rank == 12 && player->hand->cards[0]->rank >= 10))
+					break;
+				case 12:
+					if (player->hand->cards[lower_card]->rank >= 10)
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 12 && player->hand->cards[1]->rank >= 9) || (player->hand->cards[1]->rank == 12 && player->hand->cards[0]->rank >= 9))
+					else if (player->hand->cards[lower_card]->rank >= 9)
 					{
 						HandSeppe = LOW_HAND;
 					}
-				}
-				else if (player->hand->cards[0]->rank == 11 || player->hand->cards[1]->rank == 11 )
-				{
-					if ((player->hand->cards[0]->rank == 11 && player->hand->cards[1]->rank >= 10) || (player->hand->cards[1]->rank == 11 && player->hand->cards[0]->rank >= 10))
+					break;
+				case 11:
+					if (player->hand->cards[lower_card]->rank >= 10)
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
-					else if ((player->hand->cards[0]->rank == 11 && player->hand->cards[1]->rank >= 8) || (player->hand->cards[1]->rank == 11 && player->hand->cards[0]->rank >= 8))
+					else if (player->hand->cards[lower_card]->rank >= 8)
+					{
+						HandSeppe = LOW_HAND;
+					}	
+					break;
+				case 10:
+					 if (player->hand->cards[lower_card]->rank >= 8)
+					{
+						HandSeppe = LOW_HAND;
+					}	
+					break;
+				case 9:
+					 if (player->hand->cards[lower_card]->rank >= 7)
 					{
 						HandSeppe = LOW_HAND;
 					}
-				}
-				else if (player->hand->cards[0]->rank == 10 || player->hand->cards[1]->rank == 10 )
-				{
-					if ((player->hand->cards[0]->rank == 10 && player->hand->cards[1]->rank >= 8) || (player->hand->cards[1]->rank == 10 && player->hand->cards[0]->rank >= 8))
+					break;
+				case 8:
+					if (player->hand->cards[lower_card]->rank == 7)
 					{
 						HandSeppe = LOW_HAND;
-					}
-				}
-				else if (player->hand->cards[0]->rank == 9 || player->hand->cards[1]->rank == 9 )
-				{
-					if ((player->hand->cards[0]->rank == 9 && player->hand->cards[1]->rank >= 7) || (player->hand->cards[1]->rank == 9 && player->hand->cards[0]->rank >= 7))
-					{
-						HandSeppe = LOW_HAND;
-					}
-				}
-				else if ((player->hand->cards[0]->rank == 8 && player->hand->cards[1]->rank == 7) || player->hand->cards[1]->rank == 8 && player->hand->cards[0]->rank == 7 )
-				{
-					HandSeppe = LOW_HAND;
+					}	
+					break;
+				default:
+					HandSeppe = UNPLAYABLE_HAND;
+					break;
 				}
 			}
 			
@@ -251,7 +262,6 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 			}
 			else if (game->plays > MidPosition)
 			{
-
 			}
 			else
 			{
