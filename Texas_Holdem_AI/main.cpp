@@ -43,6 +43,7 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 
 		// settings
 		int MaxBetSeppe = player->chips;
+		int AllInPreflopSeppe = 35; 
 		int EarlyPosition = game->playersSize - 6;
 		int MidPosition = game->playersSize - 2;
 
@@ -56,7 +57,15 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 				higher_card = 1;
 				lower_card = 0;
 			}
-
+			for (int i = 0; i < game->playersSize; i++)
+			{
+				if (game->highestBet >= game->players[i]->bet)
+				{
+					return 0; //mee met anderen players hun all in
+				}
+				
+			}
+			
 			// filtering hand combinations
 			if (player->hand->cards[0]->rank == player->hand->cards[1]->rank) // pair
 			{
@@ -261,23 +270,84 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 				{
 					if (player->chips < (20 * game->blind))
 					{
+						int limpers = 0;
+						for (int i = game->dealer; i < player->ID; i++)
+						{
+							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste BetSeppe = bijhoud
+							{
+								limpers++;
+							}
+						}	
+						if (limpers == 0)
+						{
+							BetSeppe = 2*game->blind;
+						}
+						else
+						{
+							BetSeppe = ((2,5 + limpers * 1)*game->blind);
+						}	
 					}
 					else if ((20 * game->blind) <= player->chips < (35 * game->blind))
 					{
-						/* code */
+						int limpers = 0;
+						for (int i = game->dealer; i < player->ID; i++)
+						{
+							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
+							{
+								limpers++;
+							}
+						}	
+						if (limpers == 0)
+						{
+							BetSeppe = 2,25*game->blind;
+						}
+						else
+						{
+							BetSeppe = ((3 + limpers * 1)*game->blind);
+						}	
 					}
 					else if ((35 * game->blind) <= player->chips < (60 * game->blind))
 					{
-						/* code */
+						int limpers = 0;
+						for (int i = game->dealer; i < player->ID; i++)
+						{
+							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
+							{
+								limpers++;
+							}
+						}	
+						if (limpers == 0)
+						{
+							BetSeppe = 2,5*game->blind;
+						}
+						else
+						{
+							BetSeppe = ((3,25 + limpers * 1)*game->blind);
+						}	
 					}
 					else
 					{
-						/* code */
+						int limpers = 0;
+						for (int i = game->dealer; i < player->ID; i++)
+						{
+							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
+							{
+								limpers++;
+							}
+						}	
+						if (limpers == 0)
+						{
+							BetSeppe = 2,75*game->blind;
+						}
+						else
+						{
+							BetSeppe = ((3,5 + limpers * 1)*game->blind);
+						}	
 					}
 				}
 				else
 				{
-					// fold
+					return -1; //fold
 				}
 			}
 			else if (game->plays > MidPosition)
@@ -286,23 +356,84 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 				{
 					if (player->chips < (20 * game->blind))
 					{
+						int limpers = 0;
+						for (int i = game->dealer; i < player->ID; i++)
+						{
+							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
+							{
+								limpers++;
+							}
+						}	
+						if (limpers == 0)
+						{
+							BetSeppe = 2*game->blind;
+						}
+						else
+						{
+							BetSeppe = ((2,5 + limpers * 1)*game->blind);
+						}	
 					}
 					else if ((20 * game->blind) <= player->chips < (35 * game->blind))
 					{
-						/* code */
+						int limpers = 0;
+						for (int i = game->dealer; i < player->ID; i++)
+						{
+							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
+							{
+								limpers++;
+							}
+						}	
+						if (limpers == 0)
+						{
+							BetSeppe = 2,25*game->blind;
+						}
+						else
+						{
+							BetSeppe = ((3 + limpers * 1)*game->blind);
+						}	
 					}
 					else if ((35 * game->blind) <= player->chips < (60 * game->blind))
 					{
-						/* code */
+						int limpers = 0;
+						for (int i = game->dealer; i < player->ID; i++)
+						{
+							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
+							{
+								limpers++;
+							}
+						}	
+						if (limpers == 0)
+						{
+							BetSeppe = 2,5*game->blind;
+						}
+						else
+						{
+							BetSeppe = ((3,25 + limpers * 1)*game->blind);
+						}	
 					}
 					else
 					{
-						/* code */
+						int limpers = 0;
+						for (int i = game->dealer; i < player->ID; i++)
+						{
+							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
+							{
+								limpers++;
+							}
+						}	
+						if (limpers == 0)
+						{
+							BetSeppe = 2,75*game->blind;
+						}
+						else
+						{
+							BetSeppe = ((3,5 + limpers * 1)*game->blind);
+						}	
 					}
 				}
 				else
 				{
-					// fold
+					return -1;// fold
 				}
 			}
 			else
@@ -311,31 +442,102 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 				{
 					if (player->chips < (20 * game->blind))
 					{
-						/* code */
+						int limpers = 0;
+						for (int i = game->dealer; i < player->ID; i++)
+						{
+							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
+							{
+								limpers++;
+							}
+						}	
+						if (limpers == 0)
+						{
+							BetSeppe = 3*game->blind;
+						}
+						else
+						{
+							BetSeppe = ((2,5 + limpers * 1)*game->blind);
+						}	
 					}
 					else if ((20 * game->blind) <= player->chips < (35 * game->blind))
 					{
-						/* code */
+						int limpers = 0;
+						for (int i = game->dealer; i < player->ID; i++)
+						{
+							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
+							{
+								limpers++;
+							}
+						}	
+						if (limpers == 0)
+						{
+							BetSeppe = 3,25*game->blind;
+						}
+						else
+						{
+							BetSeppe = ((3 + limpers * 1)*game->blind);
+						}	
 					}
 					else if ((35 * game->blind) <= player->chips < (60 * game->blind))
 					{
-						/* code */
+						int limpers = 0;
+						for (int i = game->dealer; i < player->ID; i++)
+						{
+							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
+							{
+								limpers++;
+							}
+						}	
+						if (limpers == 0)
+						{
+							BetSeppe = 3,5*game->blind;
+						}
+						else
+						{
+							BetSeppe = ((3,25 + limpers * 1)*game->blind);
+						}	
 					}
 					else
 					{
-						/* code */
+						int limpers = 0;
+						for (int i = game->dealer; i < player->ID; i++)
+						{
+							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
+							{
+								limpers++;
+							}
+						}	
+						if (limpers == 0)
+						{
+							BetSeppe = 3,5*game->blind;
+						}
+						else
+						{
+							BetSeppe = ((3,5 + limpers * 1)*game->blind);
+						}	
 					}
 				}
 				else
 				{
-					// fold
+					return -1; //fold
 				}
+			}
+			if (((BetSeppe*100)/player->chips) >= AllInPreflopSeppe) //if higher than 35 percent than all in
+			{
+				return 100000000000000;
+			}
+			else
+			{
+				return BetSeppe;
 			}
 		}
 		else //postflop logic
 		{
 			/* code */
 		}
+		
+		
+		break;
 	}
 	case JIJ:
 		for (int i = 0; i < game->playersSize; i++)
