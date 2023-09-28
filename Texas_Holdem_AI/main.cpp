@@ -30,6 +30,7 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 	{
 	case IK:
 	{
+		printf("debug: in case");
 		// int
 		int BetSeppe = 0;
 		int HandSeppe = 0;
@@ -260,7 +261,7 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 			// betting
 			if (game->plays > EarlyPosition)
 			{
-				if (HandSeppe >= HIGH_HAND)
+				if (HandSeppe >= MEDIUM_HAND)
 				{
 					if (player->chips < (20 * game->blind))
 					{
@@ -518,7 +519,7 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 			}
 			if (((BetSeppe*100)/player->chips) >= AllInPreflopSeppe) //if higher than 35 percent than all in
 			{
-				return 1000000000;
+				return player->chips;
 			}
 			else if((BetSeppe - totalBet) >= 0)
 			{
@@ -533,9 +534,77 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 				return BetSeppe - totalBet;
 			}
 		}
-		else //postflop logic
+		else 
 		{
-			/* code */
+			printf("debug: on river");
+			PokerRank mijnHandRank = getMyHandRank(player->hand);
+			printf("mijnHandRank.category %i",mijnHandRank.category);
+			switch (mijnHandRank.category)
+			{
+			case STRAIGHT_FLUSH:
+			case FOUR_OF_A_KIND:
+			case FULL_HOUSE:
+				return player->chips;
+				break;
+			case FLUSH:
+				if ((totalBet *100 / player->chips) <= 60 )
+				{
+					return 10;
+				}
+				else if ((totalBet * 100 / player->chips) >= 70 && (totalBet * 100 / player->chips) <= 110)
+				{
+					return 0;
+				}
+				else
+				{
+					return -1;
+				}
+				break;
+			case STRAIGHT:
+			case THREE_OF_A_KIND:
+				if ((totalBet *100 / player->chips) <= 55 )
+				{
+					return 7;
+				}
+				else if ((totalBet * 100 / player->chips) >= 70 && (totalBet * 100 / player->chips) <= 110)
+				{
+					return 0;
+				}
+				else
+				{
+					return -1;
+				}
+				break;
+			case TWO_PAIR:
+				if ((totalBet *100 / player->chips) <= 45 )
+				{
+					return 5;
+				}
+				else if ((totalBet * 100 / player->chips) >= 70 && (totalBet * 100 / player->chips) <= 90)
+				{
+					return 0;
+				}
+				else
+				{
+					return -1;
+				}
+				break;
+			
+			default:
+				if ((totalBet *100 / player->chips) <= 40 )
+				{
+					return 1;
+				}
+				else if ((totalBet * 100 / player->chips) >= 70 && (totalBet * 100 / player->chips) <= 90)
+				{
+					return 0;
+				}
+				else
+				{
+					return -1;
+				}
+				break;
+			}
 		}
 		
 		
@@ -565,9 +634,9 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 	case HIJ:
 		if (totalBet > 50)
 		{
-			return (0);
+			return (-1);
 		}
-		return (50 - totalBet);
+		return (0 - totalBet);
 		break;
 	case ZIJ:
 	{
@@ -642,7 +711,7 @@ int main(void)
 	makeNewDeck(&game);
 
 	Player ik;
-	strcpy(ik.name, "Ikke de beste");
+	strcpy(ik.name, "seppe ");
 	ik.ID = IK;
 
 	Player jij;
