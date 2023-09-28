@@ -46,30 +46,23 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 		int AllInPreflopSeppe = 35; 
 		int EarlyPosition = game->playersSize - 6;
 		int MidPosition = game->playersSize - 2;
-
 		// preflop
-		if (table[0])
+		if (table[0] == nullptr)
 		{
 			int higher_card = 0;
 			int lower_card = 1;
-			if (player->hand->cards[0]->rank <= player->hand->cards[1]->rank)
+			if (player->hand->cards[0]->rank <= player->hand->cards[1]->rank || player->hand->cards[1]->rank == 1)
 			{
 				higher_card = 1;
 				lower_card = 0;
 			}
-			for (int i = 0; i < game->playersSize; i++)
-			{
-				if (game->highestBet >= game->players[i]->bet)
-				{
-					return 0; //mee met anderen players hun all in
-				}
-				
-			}
-			
+
+			printCard(player->hand->cards[higher_card]);
+			printCard(player->hand->cards[lower_card]);
 			// filtering hand combinations
 			if (player->hand->cards[0]->rank == player->hand->cards[1]->rank) // pair
 			{
-				if (player->hand->cards[0]->rank >= 9)
+				if (player->hand->cards[0]->rank >= 9 || player->hand->cards[0]->rank == 1)
 				{
 					HandSeppe = HIGH_HAND;
 				}
@@ -86,22 +79,37 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 			{
 				switch (player->hand->cards[higher_card]->rank)
 				{
-				case 13:
-					if (player->hand->cards[lower_card]->rank >= 9)
+				case 1:
+				case 14:
+					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = HIGH_HAND;
 					}
-					else if (player->hand->cards[lower_card]->rank >= 5)
+					else if (player->hand->cards[lower_card]->rank >= 6)
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
-					else if (player->hand->cards[lower_card]->rank >= 1)
+					else if (player->hand->cards[lower_card]->rank >= 2)
+					{
+						HandSeppe = LOW_HAND;
+					}
+					break;
+				case 13:
+					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
+					{
+						HandSeppe = HIGH_HAND;
+					}
+					else if (player->hand->cards[lower_card]->rank >= 9)
+					{
+						HandSeppe = MEDIUM_HAND;
+					}
+					else if (player->hand->cards[lower_card]->rank >= 2)
 					{
 						HandSeppe = LOW_HAND;
 					}
 					break;
 				case 12:
-					if (player->hand->cards[lower_card]->rank >= 9)
+					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = HIGH_HAND;
 					}
@@ -109,27 +117,27 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
-					else if (player->hand->cards[lower_card]->rank >= 1)
+					break;
+				case 11:
+					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
+					{
+						HandSeppe = HIGH_HAND;
+					}
+					else if (player->hand->cards[lower_card]->rank >= 8)
+					{
+						HandSeppe = MEDIUM_HAND;
+					}
+					else if (player->hand->cards[lower_card]->rank >= 7)
 					{
 						HandSeppe = LOW_HAND;
 					}
 					break;
-				case 11:
-					if (player->hand->cards[lower_card]->rank >= 9)
-					{
-						HandSeppe = HIGH_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 7)
-					{
-						HandSeppe = MEDIUM_HAND;
-					}
-					break;
 				case 10:
-					if (player->hand->cards[lower_card]->rank >= 9)
+					if (player->hand->cards[lower_card]->rank >= 9 || player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = HIGH_HAND;
 					}
-					else if (player->hand->cards[lower_card]->rank >= 7)
+					else if (player->hand->cards[lower_card]->rank >= 8)
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
@@ -139,49 +147,35 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 					}
 					break;
 				case 9:
-					if (player->hand->cards[lower_card]->rank >= 8)
-					{
-						HandSeppe = HIGH_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 7)
+					if (player->hand->cards[lower_card]->rank >= 8 || player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
-					else if (player->hand->cards[lower_card]->rank >= 5)
+					else if (player->hand->cards[lower_card]->rank >= 6)
 					{
 						HandSeppe = LOW_HAND;
 					}
 					break;
 				case 8:
-					if (player->hand->cards[lower_card]->rank >= 7)
-					{
-						HandSeppe = MEDIUM_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 5)
+					if (player->hand->cards[lower_card]->rank >= 8 || player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = LOW_HAND;
 					}
 					break;
 				case 7:
-					if (player->hand->cards[lower_card]->rank >= 5)
+					if (player->hand->cards[lower_card]->rank >= 5 || player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = LOW_HAND;
 					}
 					break;
 				case 6:
-					if (player->hand->cards[lower_card]->rank >= 4)
+					if (player->hand->cards[lower_card]->rank == 5 || player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = LOW_HAND;
 					}
 					break;
 				case 5:
-					if (player->hand->cards[lower_card]->rank == 4)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 4:
-					if (player->hand->cards[lower_card]->rank == 3)
+					if (player->hand->cards[lower_card]->rank == 4 || player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = LOW_HAND;
 					}
@@ -195,32 +189,43 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 			{
 				switch (player->hand->cards[higher_card]->rank)
 				{
-				case 13:
-					if (player->hand->cards[lower_card]->rank >= 9)
+				case 1:	
+				case 14:
+					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = HIGH_HAND;
 					}
-					else if (player->hand->cards[lower_card]->rank >= 6)
+					else if (player->hand->cards[lower_card]->rank >= 7)
+					{
+						HandSeppe = LOW_HAND;
+					}
+					break;
+				case 13:
+					if (player->hand->cards[lower_card]->rank >= 11 || player->hand->cards[lower_card]->rank == 1)
+					{
+						HandSeppe = HIGH_HAND;
+					}
+					else if (player->hand->cards[lower_card]->rank >= 10)
+					{
+						HandSeppe = MEDIUM_HAND;
+					}
+					else if (player->hand->cards[lower_card]->rank >= 9)
 					{
 						HandSeppe = LOW_HAND;
 					}
 					break;
 				case 12:
-					if (player->hand->cards[lower_card]->rank >= 10)
-					{
-						HandSeppe = HIGH_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 9)
+					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
-					else if (player->hand->cards[lower_card]->rank >= 8)
+					else if (player->hand->cards[lower_card]->rank >= 9)
 					{
 						HandSeppe = LOW_HAND;
 					}
 					break;
 				case 11:
-					if (player->hand->cards[lower_card]->rank >= 9)
+					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = MEDIUM_HAND;
 					}
@@ -230,29 +235,19 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 					}
 					break;
 				case 10:
-					if (player->hand->cards[lower_card]->rank >= 9)
-					{
-						HandSeppe = MEDIUM_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 7)
+					if (player->hand->cards[lower_card]->rank >= 8|| player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = LOW_HAND;
 					}
 					break;
 				case 9:
-					if (player->hand->cards[lower_card]->rank >= 7)
+					if (player->hand->cards[lower_card]->rank >= 7|| player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = LOW_HAND;
 					}
 					break;
 				case 8:
-					if (player->hand->cards[lower_card]->rank >= 6)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 7:
-					if (player->hand->cards[lower_card]->rank == 6)
+					if (player->hand->cards[lower_card]->rank == 7|| player->hand->cards[lower_card]->rank == 1)
 					{
 						HandSeppe = LOW_HAND;
 					}
@@ -262,7 +257,6 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 					break;
 				}
 			}
-
 			// betting
 			if (game->plays > EarlyPosition)
 			{
@@ -526,9 +520,17 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 			{
 				return 1000000000;
 			}
+			else if((BetSeppe - totalBet) >= 0)
+			{
+				return BetSeppe - totalBet;// total is the bet to match right?
+			}
+			else if((player->chips - player->bet) <= game->blind)
+			{
+				return 0;
+			}
 			else
 			{
-				return BetSeppe - game->highestBet;// highest bet is the bet to match right?
+				return BetSeppe - totalBet;
 			}
 		}
 		else //postflop logic
