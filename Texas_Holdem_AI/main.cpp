@@ -15,6 +15,32 @@ enum spelerIDs
 
 bool init = false;
 int maxBetEver[MAX_PLAYER_ID];
+int NumberOfCallersOnStart (struct Game *game, struct Player *player)
+{
+	int total = -1;
+	if (player->bet <= game->blind || (game->players[(game->dealer+2)%game->playersSize] == player && player->bet == game->blind *2))
+	{
+		unsigned int CurrentBet = game->blind*2;
+		for (int i = 0; i < game->playersSize; i++)
+		{
+			Player* PlayerAtTable = game->players[(game->dealer+3+i)%game->playersSize];
+			if (PlayerAtTable == player)
+			{
+				break;
+			}
+
+			if (PlayerAtTable->bet == CurrentBet)
+			{
+				total++;
+			}
+			else if (PlayerAtTable->bet > CurrentBet)
+			{
+				CurrentBet = PlayerAtTable->bet;
+			}
+		
+		}
+	}
+}
 
 int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet)
 {
@@ -34,6 +60,7 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 		// int
 		int BetSeppe = 0;
 		int HandSeppe = 0;
+		int BigBlind = game->blind * 2;
 		enum HAND_SEPPE
 		{
 			UNPLAYABLE_HAND = 0,
@@ -43,6 +70,38 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 		};
 
 		// settings
+		int LutSuited [14][14] = {
+			{HIGH_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND}, //ace
+			{LOW_HAND,LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND},//two
+			{LOW_HAND,UNPLAYABLE_HAND,LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND},//three
+			{LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND},//four
+			{LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,MEDIUM_HAND,LOW_HAND,LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND},//five
+			{MEDIUM_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,MEDIUM_HAND},//six
+			{MEDIUM_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,UNPLAYABLE_HAND,LOW_HAND,MEDIUM_HAND},//seven
+			{MEDIUM_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND},//eight
+			{MEDIUM_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND},//nine
+			{HIGH_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND,MEDIUM_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND},//ten
+			{HIGH_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,MEDIUM_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND}, //jack
+			{HIGH_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,MEDIUM_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND}, //queen
+			{HIGH_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,MEDIUM_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND}, //king
+			{HIGH_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND} //ace
+		};
+		int LutNotSuited [14][14] = {
+			{HIGH_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND,LOW_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND}, //ace
+			{UNPLAYABLE_HAND,LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND},//two
+			{UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND},//three
+			{UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND},//four
+			{UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,MEDIUM_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND},//five
+			{UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,MEDIUM_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND},//six
+			{LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,HIGH_HAND,LOW_HAND,LOW_HAND,LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND},//seven
+			{LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,HIGH_HAND,LOW_HAND,LOW_HAND,LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND},//eight
+			{LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND,HIGH_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND},//nine
+			{HIGH_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND,HIGH_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,HIGH_HAND},//ten
+			{HIGH_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND,MEDIUM_HAND,HIGH_HAND,MEDIUM_HAND,HIGH_HAND,HIGH_HAND},//jack
+			{HIGH_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,MEDIUM_HAND,MEDIUM_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND},//queen
+			{HIGH_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,MEDIUM_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND},//king
+			{HIGH_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND,LOW_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND},//ace
+		};
 		int MaxBetSeppe = player->chips;
 		int AllInPreflopSeppe = 35; 
 		int EarlyPosition = game->playersSize - 6;
@@ -57,286 +116,70 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 				higher_card = 1;
 				lower_card = 0;
 			}
-
 			printCard(player->hand->cards[higher_card]);
 			printCard(player->hand->cards[lower_card]);
+
 			// filtering hand combinations
-			if (player->hand->cards[0]->rank == player->hand->cards[1]->rank) // pair
+			if (player->hand->cards[0]->suit == player->hand->cards[1]->suit) // suited
 			{
-				if (player->hand->cards[0]->rank >= 9 || player->hand->cards[0]->rank == 1)
-				{
-					HandSeppe = HIGH_HAND;
-				}
-				else if (player->hand->cards[0]->rank >= 4)
-				{
-					HandSeppe = MEDIUM_HAND;
-				}
-				else
-				{
-					HandSeppe = LOW_HAND;
-				}
+				LutSuited[player->hand->cards[higher_card]->rank - 1][player->hand->cards[lower_card]->rank - 1];
 			}
-			else if (player->hand->cards[0]->suit == player->hand->cards[1]->suit) // suited
+			else // not suited
 			{
-				switch (player->hand->cards[higher_card]->rank)
-				{
-				case 1:
-				case 14:
-					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = HIGH_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 6)
-					{
-						HandSeppe = MEDIUM_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 2)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 13:
-					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = HIGH_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 9)
-					{
-						HandSeppe = MEDIUM_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 2)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 12:
-					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = HIGH_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 8)
-					{
-						HandSeppe = MEDIUM_HAND;
-					}
-					break;
-				case 11:
-					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = HIGH_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 8)
-					{
-						HandSeppe = MEDIUM_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 7)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 10:
-					if (player->hand->cards[lower_card]->rank >= 9 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = HIGH_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 8)
-					{
-						HandSeppe = MEDIUM_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 6)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 9:
-					if (player->hand->cards[lower_card]->rank >= 8 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = MEDIUM_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 6)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 8:
-					if (player->hand->cards[lower_card]->rank >= 8 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 7:
-					if (player->hand->cards[lower_card]->rank >= 5 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 6:
-					if (player->hand->cards[lower_card]->rank == 5 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 5:
-					if (player->hand->cards[lower_card]->rank == 4 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				default:
-					HandSeppe = UNPLAYABLE_HAND;
-					break;
-				}
+				LutNotSuited[player->hand->cards[higher_card]->rank - 1][player->hand->cards[lower_card]->rank - 1];
 			}
-			else // not suited and no pair
-			{
-				switch (player->hand->cards[higher_card]->rank)
-				{
-				case 1:	
-				case 14:
-					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = HIGH_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 7)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 13:
-					if (player->hand->cards[lower_card]->rank >= 11 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = HIGH_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 10)
-					{
-						HandSeppe = MEDIUM_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 9)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 12:
-					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = MEDIUM_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 9)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 11:
-					if (player->hand->cards[lower_card]->rank >= 10 || player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = MEDIUM_HAND;
-					}
-					else if (player->hand->cards[lower_card]->rank >= 8)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 10:
-					if (player->hand->cards[lower_card]->rank >= 8|| player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 9:
-					if (player->hand->cards[lower_card]->rank >= 7|| player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				case 8:
-					if (player->hand->cards[lower_card]->rank == 7|| player->hand->cards[lower_card]->rank == 1)
-					{
-						HandSeppe = LOW_HAND;
-					}
-					break;
-				default:
-					HandSeppe = UNPLAYABLE_HAND;
-					break;
-				}
-			}
+
 			// betting
 			if (game->plays > EarlyPosition)
 			{
 				if (HandSeppe >= MEDIUM_HAND)
 				{
-					if (player->chips < (20 * game->blind))
+					if (player->chips < (20 * BigBlind))
 					{
-						int limpers = 0;
-						for (int i = game->dealer; i < player->ID; i++)
-						{
-							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste BetSeppe = bijhoud
-							{
-								limpers++;
-							}
-						}	
+						int limpers = NumberOfCallersOnStart(game,player);
 						if (limpers == 0)
 						{
-							BetSeppe = 2*game->blind;
+							BetSeppe = 2*BigBlind;
 						}
 						else
 						{
-							BetSeppe = ((2,5 + limpers * 1)*game->blind);
+							BetSeppe = ((2,5 + limpers * 1)*BigBlind);
 						}	
 					}
-					else if ((20 * game->blind) <= player->chips < (35 * game->blind))
+					else if ((20 * BigBlind) <= player->chips < (35 * BigBlind))
 					{
-						int limpers = 0;
-						for (int i = game->dealer; i < player->ID; i++)
-						{
-							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
-							{
-								limpers++;
-							}
-						}	
+						int limpers = NumberOfCallersOnStart(game,player);	
 						if (limpers == 0)
 						{
-							BetSeppe = 2,25*game->blind;
+							BetSeppe = 2,25*BigBlind;
 						}
 						else
 						{
-							BetSeppe = ((3 + limpers * 1)*game->blind);
+							BetSeppe = ((3 + limpers * 1)*BigBlind);
 						}	
 					}
-					else if ((35 * game->blind) <= player->chips < (60 * game->blind))
+					else if ((35 * BigBlind) <= player->chips < (60 * BigBlind))
 					{
-						int limpers = 0;
-						for (int i = game->dealer; i < player->ID; i++)
-						{
-							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
-							{
-								limpers++;
-							}
-						}	
+						int limpers = NumberOfCallersOnStart(game,player);	
 						if (limpers == 0)
 						{
-							BetSeppe = 2,5*game->blind;
+							BetSeppe = 2,5*BigBlind;
 						}
 						else
 						{
-							BetSeppe = ((3,25 + limpers * 1)*game->blind);
+							BetSeppe = ((3,25 + limpers * 1)*BigBlind);
 						}	
 					}
 					else
 					{
-						int limpers = 0;
-						for (int i = game->dealer; i < player->ID; i++)
-						{
-							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
-							{
-								limpers++;
-							}
-						}	
+						int limpers = NumberOfCallersOnStart(game,player);	
 						if (limpers == 0)
 						{
-							BetSeppe = 2,75*game->blind;
+							BetSeppe = 2,75*BigBlind;
 						}
 						else
 						{
-							BetSeppe = ((3,5 + limpers * 1)*game->blind);
+							BetSeppe = ((3,5 + limpers * 1)*BigBlind);
 						}	
 					}
 				}
@@ -349,80 +192,52 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 			{
 				if (HandSeppe >= MEDIUM_HAND)
 				{
-					if (player->chips < (20 * game->blind))
+					if (player->chips < (20 * BigBlind))
 					{
-						int limpers = 0;
-						for (int i = game->dealer; i < player->ID; i++)
-						{
-							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
-							{
-								limpers++;
-							}
-						}	
+						int limpers = NumberOfCallersOnStart(game,player);	
 						if (limpers == 0)
 						{
-							BetSeppe = 2*game->blind;
+							BetSeppe = 2*BigBlind;
 						}
 						else
 						{
-							BetSeppe = ((2,5 + limpers * 1)*game->blind);
+							BetSeppe = ((2,5 + limpers * 1)*BigBlind);
 						}	
 					}
-					else if ((20 * game->blind) <= player->chips < (35 * game->blind))
+					else if ((20 * BigBlind) <= player->chips < (35 * BigBlind))
 					{
-						int limpers = 0;
-						for (int i = game->dealer; i < player->ID; i++)
-						{
-							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
-							{
-								limpers++;
-							}
-						}	
+						int limpers = NumberOfCallersOnStart(game,player);	
 						if (limpers == 0)
 						{
-							BetSeppe = 2,25*game->blind;
+							BetSeppe = 2,25*BigBlind;
 						}
 						else
 						{
-							BetSeppe = ((3 + limpers * 1)*game->blind);
+							BetSeppe = ((3 + limpers * 1)*BigBlind);
 						}	
 					}
-					else if ((35 * game->blind) <= player->chips < (60 * game->blind))
+					else if ((35 * BigBlind) <= player->chips < (60 * BigBlind))
 					{
-						int limpers = 0;
-						for (int i = game->dealer; i < player->ID; i++)
-						{
-							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
-							{
-								limpers++;
-							}
-						}	
+						int limpers = NumberOfCallersOnStart(game,player);	
 						if (limpers == 0)
 						{
-							BetSeppe = 2,5*game->blind;
+							BetSeppe = 2,5*BigBlind;
 						}
 						else
 						{
-							BetSeppe = ((3,25 + limpers * 1)*game->blind);
+							BetSeppe = ((3,25 + limpers * 1)*BigBlind);
 						}	
 					}
 					else
 					{
-						int limpers = 0;
-						for (int i = game->dealer; i < player->ID; i++)
-						{
-							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
-							{
-								limpers++;
-							}
-						}	
+						int limpers = NumberOfCallersOnStart(game,player);	
 						if (limpers == 0)
 						{
-							BetSeppe = 2,75*game->blind;
+							BetSeppe = 2,75*BigBlind;
 						}
 						else
 						{
-							BetSeppe = ((3,5 + limpers * 1)*game->blind);
+							BetSeppe = ((3,5 + limpers * 1)*BigBlind);
 						}	
 					}
 				}
@@ -435,80 +250,52 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 			{
 				if (HandSeppe >= LOW_HAND)
 				{
-					if (player->chips < (20 * game->blind))
+					if (player->chips < (20 * BigBlind))
 					{
-						int limpers = 0;
-						for (int i = game->dealer; i < player->ID; i++)
-						{
-							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
-							{
-								limpers++;
-							}
-						}	
+						int limpers = NumberOfCallersOnStart(game,player);	
 						if (limpers == 0)
 						{
-							BetSeppe = 3*game->blind;
+							BetSeppe = 3*BigBlind;
 						}
 						else
 						{
-							BetSeppe = ((2,5 + limpers * 1)*game->blind);
+							BetSeppe = ((2,5 + limpers * 1)*BigBlind);
 						}	
 					}
-					else if ((20 * game->blind) <= player->chips < (35 * game->blind))
+					else if ((20 * BigBlind) <= player->chips < (35 * BigBlind))
 					{
-						int limpers = 0;
-						for (int i = game->dealer; i < player->ID; i++)
-						{
-							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
-							{
-								limpers++;
-							}
-						}	
+						int limpers = NumberOfCallersOnStart(game,player);	
 						if (limpers == 0)
 						{
-							BetSeppe = 3,25*game->blind;
+							BetSeppe = 3,25*BigBlind;
 						}
 						else
 						{
-							BetSeppe = ((3 + limpers * 1)*game->blind);
+							BetSeppe = ((3 + limpers * 1)*BigBlind);
 						}	
 					}
-					else if ((35 * game->blind) <= player->chips < (60 * game->blind))
+					else if ((35 * BigBlind) <= player->chips < (60 * BigBlind))
 					{
-						int limpers = 0;
-						for (int i = game->dealer; i < player->ID; i++)
-						{
-							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
-							{
-								limpers++;
-							}
-						}	
+						int limpers = NumberOfCallersOnStart(game,player);	
 						if (limpers == 0)
 						{
-							BetSeppe = 3,5*game->blind;
+							BetSeppe = 3,5*BigBlind;
 						}
 						else
 						{
-							BetSeppe = ((3,25 + limpers * 1)*game->blind);
+							BetSeppe = ((3,25 + limpers * 1)*BigBlind);
 						}	
 					}
 					else
 					{
-						int limpers = 0;
-						for (int i = game->dealer; i < player->ID; i++)
-						{
-							if (0 == game->players[i]->bet) // ik neem aan dat bet de laaste return bijhoud
-							{
-								limpers++;
-							}
-						}	
+						int limpers = NumberOfCallersOnStart(game,player);	
 						if (limpers == 0)
 						{
-							BetSeppe = 3,5*game->blind;
+							BetSeppe = 3,5*BigBlind;
 						}
 						else
 						{
-							BetSeppe = ((3,5 + limpers * 1)*game->blind);
+							BetSeppe = ((3,5 + limpers * 1)*BigBlind);
 						}	
 					}
 				}
@@ -525,7 +312,7 @@ int willYouRaise(struct Game *game, struct Player *player, unsigned int totalBet
 			{
 				return BetSeppe - totalBet;// total is the bet to match right?
 			}
-			else if((player->chips - player->bet) <= game->blind)
+			else if((player->chips - player->bet) <= BigBlind)
 			{
 				return 0;
 			}
