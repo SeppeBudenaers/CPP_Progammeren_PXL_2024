@@ -1,6 +1,7 @@
 {
     "C_Cpp.default.compilerPath": "cl.exe",
     "files.associations": {
-        "system_error": "cpp"
+        "system_error": "cpp",
+        "iostream": "cpp"
     }
 }

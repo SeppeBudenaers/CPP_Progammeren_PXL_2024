@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string.h>
-#define DEBUG_PRINT
 #include "texasholdem.h"
 
 enum spelerIDs
