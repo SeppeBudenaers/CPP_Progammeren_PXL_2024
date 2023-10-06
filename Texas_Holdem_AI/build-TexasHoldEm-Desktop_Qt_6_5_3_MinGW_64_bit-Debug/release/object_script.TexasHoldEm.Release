@@ -1,0 +1,10 @@
+release/main.o
+release/bart.o
+release/deck.o
+release/game.o
+release/hand.o
+release/king_of_aces.o
+release/poker_rank.o
+release/seppe.o
+release/table.o
+release/tournament.o

@@ -1,0 +1,10 @@
+debug/main.o
+debug/bart.o
+debug/deck.o
+debug/game.o
+debug/hand.o
+debug/king_of_aces.o
+debug/poker_rank.o
+debug/seppe.o
+debug/table.o
+debug/tournament.o
