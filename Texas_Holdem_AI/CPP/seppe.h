@@ -4,7 +4,7 @@
 #include "player.h"
 namespace PXL2023
 {
-class seppe : public Player //Bart is Player
+class seppe : public Player //seppe is Player
 {
 public:
     seppe( unsigned char instance = 0 )	: Player(instance)	{}
@@ -19,6 +19,7 @@ private:
         HIGH_HAND,
     };
     int PreflopFiltering();
+    int NumberOfCallersOnStart ();
 };
 }
 #endif // SEPPE_H

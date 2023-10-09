@@ -79,8 +79,38 @@ namespace PXL2023
         return HandSeppe;
     }
 
+    int seppe::NumberOfCallersOnStart ()
+    {
+        int total = -1;
+
+        if (getBet()<= getGame()->getBlind() || (getGame()->getDistanceToDealer(this) == 2 && getBet() == getGame()->getBlind()*2))
+        {
+            unsigned int CurrentBet = getGame()->getBlind()*2;
+            for (int i = 0; i < getGame()->getPlayers().size(); i++)
+            {
+                Player* PlayerAtTable = getGame()->getPlayers().at((getGame()->getDealerLocation()+3+i)%getGame()->getPlayers().size());
+                if (PlayerAtTable == this)
+                {
+                    break;
+                }
+
+                if (PlayerAtTable->getBet() == CurrentBet)
+                {
+                    total++;
+                }
+                else if (PlayerAtTable->getBet() > CurrentBet)
+                {
+                    CurrentBet = PlayerAtTable->getBet();
+                }
+
+            }
+        }
+        return total;
+    }
+
     int seppe::willYouRaise( unsigned int totalBet )
     {
+        std::cout <<"number of calls this round" <<NumberOfCallersOnStart ()<<std::endl;
         return( 0 );
     }
 }

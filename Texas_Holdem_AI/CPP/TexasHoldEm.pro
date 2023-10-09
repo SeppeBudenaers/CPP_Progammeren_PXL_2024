@@ -3,8 +3,7 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-#DEFINES += FULL_PRINT \
-#	DEBUG_PRINT
+DEFINES += FULL_PRINT DEBUG_PRINT
 
 SOURCES += main.cpp \
 	bart.cpp \

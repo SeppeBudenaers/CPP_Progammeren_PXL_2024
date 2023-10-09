@@ -23,7 +23,7 @@ int main( int argumentCount, char * argumentVector[] )
 
 	if( argumentCount > 1 && ( strcmp( argumentVector[argumentCount-1], "stats" ) == 0 ) )
 	{
-        runStatistics( tour, 100 );
+        runStatistics( tour, 10 );
 	}
 	else
 	{

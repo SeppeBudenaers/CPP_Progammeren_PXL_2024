@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 11.0.3, 2023-10-06T18:19:46. -->
+<!-- Written by QtCreator 11.0.3, 2023-10-09T14:40:12. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -243,7 +243,6 @@
     <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:C:/02_PXL/CPP_Progammeren_PXL_2024/Texas_Holdem_AI/CPP/TexasHoldEm.pro</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/02_PXL/CPP_Progammeren_PXL_2024/Texas_Holdem_AI/CPP/TexasHoldEm.pro</value>
-    <value type="QString" key="RunConfiguration.Arguments">stats</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>

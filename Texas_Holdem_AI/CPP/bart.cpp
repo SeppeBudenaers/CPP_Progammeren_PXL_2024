@@ -22,7 +22,7 @@ const char * Bart::getName( void ) const
 int Bart::willYouRaise( unsigned int totalBet )
 {
 	static int num = 0;
-	std::cout << amountOfWin++ << " & " << num++ << std::endl;
+    //std::cout << amountOfWin++ << " & " << num++ << std::endl;
 	switch( instance )
 	{
 	case 0:
