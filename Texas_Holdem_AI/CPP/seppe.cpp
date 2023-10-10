@@ -124,6 +124,16 @@ namespace PXL2023
         return total;
     }
 
+    bool seppe::Bluffing(int BluffPercentage)
+    {
+        if(BluffPercentage <= 0)
+        {
+            if((rand()%BluffPercentage) == 0){return true;}
+            else{return false;}
+        }
+        else {return false;}
+    }
+
     int seppe::willYouRaise( unsigned int totalBet )
     {
         // initialization
@@ -133,30 +143,46 @@ namespace PXL2023
 
         // initialization of settings
         int MaxBet = getChips();
-        float FoldBarrier = 0;
-        int AllInPercentage = 100;
+        float FoldBarrier = 0.45;
+        unsigned int AllInPercentage = 35;
         int BluffPercentage = -1;
-        int EarlyPosition = (getGame()->getPlayers().size() *0.25);
-        int MidPosition = (getGame()->getPlayers().size() *0.75);
+        unsigned int EarlyPosition = (getGame()->getPlayers().size() * 0.25);
+        unsigned int MidPosition = (getGame()->getPlayers().size() * 0.75);
 
         switch( instance ) // settings
         {
         case 0:
+            // default intializations
+            break;
+        case 1:
             MaxBet = getChips();
+            FoldBarrier = 40;
+            AllInPercentage = 40;
             BluffPercentage = -1;
             EarlyPosition = (getGame()->getPlayers().size() * 0.25);
             MidPosition = (getGame()->getPlayers().size() * 0.75);
             break;
-        case 1:
-            break;
         case 2:
+            MaxBet = getChips();
+            FoldBarrier = 55;
+            AllInPercentage = 30;
+            BluffPercentage = -1;
+            EarlyPosition = (getGame()->getPlayers().size() * 0.25);
+            MidPosition = (getGame()->getPlayers().size() * 0.75);
             break;
         case 3:
+            MaxBet = getChips();
+            FoldBarrier = 0.50;
+            AllInPercentage = 37;
+            BluffPercentage = -1;
+            EarlyPosition = (getGame()->getPlayers().size() * 0.25);
+            MidPosition = (getGame()->getPlayers().size() * 0.75);
             break;
         }
 
         STAGE GameState = STAGE(Stage());
         int  Hand = PreflopFiltering();
+
         switch (GameState) // game state logic
         {
         case PREFLOP:
@@ -198,22 +224,30 @@ namespace PXL2023
 
             }
 
-            if(Fold)
+            if(Fold && (!Bluffed))
             {
                 if(getBet()>= (getChips() * FoldBarrier)){return CHECK;}
                 else{return FOLD;}
             }
             else
             {
-                if((Bet * 100)/getChips() >= AllInPercentage)
+                if(Bluffing(BluffPercentage))
                 {
-                    return getChips();
+                    Bluffed = true;
+                    return ALLIN;
                 }
-                else if((Bet - totalBet) >= 0)
+                else
                 {
-                    return Bet - totalBet;
+                    if((Bet * 100)/getChips() >= AllInPercentage)
+                    {
+                        return ALLIN;
+                    }
+                    else if((Bet - totalBet) >= 0)
+                    {
+                        return Bet - totalBet;
+                    }
+                    else {return CHECK;}
                 }
-                else {return CHECK;}
             }
 
             break;

@@ -15,6 +15,7 @@ public:
 private:
 #define FOLD -1
 #define CHECK 0
+#define ALLIN getChips()
 
     enum HAND
     {
@@ -38,7 +39,7 @@ private:
     bool Bluffing(int BluffPercentage);
     int FirstBet(int Hand);
 
-    int BigBlind = getGame()->getBlind() *2;
+    bool Bluffed = false;
 };
 }
 #endif // SEPPE_H
