@@ -21,9 +21,9 @@ private:
     enum STAGE
     {
         PREFLOP = 0,
-        POSTFLOP = 3,
-        TURN = 4,
-        RIVER = 5
+        POSTFLOP,
+        TURN,
+        RIVER
     };
 
     bool IsFirstBet();

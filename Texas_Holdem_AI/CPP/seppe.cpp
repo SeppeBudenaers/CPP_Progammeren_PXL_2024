@@ -15,6 +15,7 @@ namespace PXL2023
 
         return FirstBet;
     }
+
     int seppe::Stage(){
         if(getTable()->isPreFlop()){return PREFLOP;}
         else if(getTable()->isFlop()){return POSTFLOP;}
@@ -137,7 +138,8 @@ namespace PXL2023
         case 3:
             break;
         }
-        switch (GameState) {
+        switch (GameState) // game state logic
+        {
         case PREFLOP:
 
             break;
