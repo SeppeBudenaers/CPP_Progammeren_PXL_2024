@@ -133,7 +133,8 @@ namespace PXL2023
 
         // initialization of settings
         int MaxBet = getChips();
-        int AllInPercentage = 35;
+        float FoldBarrier = 0;
+        int AllInPercentage = 100;
         int BluffPercentage = -1;
         int EarlyPosition = (getGame()->getPlayers().size() *0.25);
         int MidPosition = (getGame()->getPlayers().size() *0.75);
@@ -199,8 +200,8 @@ namespace PXL2023
 
             if(Fold)
             {
-                if(getBet()>= (getChips() * 0.50)){return 0;}
-                else{return FOLD}
+                if(getBet()>= (getChips() * FoldBarrier)){return CHECK;}
+                else{return FOLD;}
             }
             else
             {
@@ -212,7 +213,7 @@ namespace PXL2023
                 {
                     return Bet - totalBet;
                 }
-                else {return 0;}
+                else {return CHECK;}
             }
 
             break;
