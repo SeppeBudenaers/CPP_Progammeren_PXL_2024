@@ -11,6 +11,7 @@ public:
     const char* getName( void ) const						;
     int willYouRaise( unsigned int totalBet )				;
 private:
+#define FOLD = -1;
     enum HAND
     {
         UNPLAYABLE_HAND = 0,

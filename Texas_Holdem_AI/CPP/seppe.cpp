@@ -126,10 +126,25 @@ namespace PXL2023
 
     int seppe::willYouRaise( unsigned int totalBet )
     {
-        STAGE GameState = STAGE(Stage());
+        // initialization
+        bool Fold = false;
+        int BigBlind = getGame()->getBlind() *2;
+        int Bet = 0;
+
+        // initialization of settings
+        int MaxBet = getChips();
+        int AllInPercentage = 35;
+        int BluffPercentage = -1;
+        int EarlyPosition = (getGame()->getPlayers().size() *0.25);
+        int MidPosition = (getGame()->getPlayers().size() *0.75);
+
         switch( instance ) // settings
         {
         case 0:
+            MaxBet = getChips();
+            BluffPercentage = -1;
+            EarlyPosition = (getGame()->getPlayers().size() * 0.25);
+            MidPosition = (getGame()->getPlayers().size() * 0.75);
             break;
         case 1:
             break;
@@ -138,9 +153,67 @@ namespace PXL2023
         case 3:
             break;
         }
+
+        STAGE GameState = STAGE(Stage());
+        int  Hand = PreflopFiltering();
         switch (GameState) // game state logic
         {
         case PREFLOP:
+            if(IsFirstBet()){
+                if(((getGame()->getDistanceToDealer(this)-3)%getGame()->getPlayers().size())>= EarlyPosition){
+                    if(Hand >= HIGH_HAND)
+                    {
+                        if(getChips()<(20 * BigBlind)){Bet = (2 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                        else if ((20 * BigBlind) <= getChips()<(35 * BigBlind)){Bet = (2.25 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                        else if ((35 * BigBlind) <= getChips()<(60 * BigBlind)){Bet = (2.5 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                        else{Bet = (2.75 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                    }
+                    else{Fold = true;}
+                }
+                else if(((getGame()->getDistanceToDealer(this)-3)%getGame()->getPlayers().size())>= MidPosition){
+                    if(Hand >= MEDIUM_HAND)
+                    {
+                        if(getChips()<(20 * BigBlind)){Bet = (2 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                        else if ((20 * BigBlind) <= getChips()<(35 * BigBlind)){Bet = (2.25 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                        else if ((35 * BigBlind) <= getChips()<(60 * BigBlind)){Bet = (2.5 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                        else{Bet = (2.75 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                    }
+                    else{Fold = true;}
+                }
+                else
+                {
+                    if(Hand >= LOW_HAND)
+                    {
+                        if(getChips()<(20 * BigBlind)){Bet = (2 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                        else if ((20 * BigBlind) <= getChips()<(35 * BigBlind)){Bet = (2.25 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                        else if ((35 * BigBlind) <= getChips()<(60 * BigBlind)){Bet = (2.5 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                        else{Bet = (2.75 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                    }
+                    else{Fold = true;}
+                }
+            }
+            else
+            {
+
+            }
+
+            if(Fold)
+            {
+                if(getBet()>= (getChips() * 0.50)){return 0;}
+                else{return FOLD}
+            }
+            else
+            {
+                if((Bet * 100)/getChips() >= AllInPercentage)
+                {
+                    return getChips();
+                }
+                else if((Bet - totalBet) >= 0)
+                {
+                    return Bet - totalBet;
+                }
+                else {return 0;}
+            }
 
             break;
         case POSTFLOP:
