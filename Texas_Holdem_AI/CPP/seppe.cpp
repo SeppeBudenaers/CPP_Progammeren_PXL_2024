@@ -252,13 +252,13 @@ namespace PXL2023
 
             break;
         case POSTFLOP:
-
+            return CHECK;
             break;
         case TURN:
-
+            return CHECK;
             break;
         case RIVER:
-
+            return CHECK;
             break;
         }
         std::cout <<"number of calls this round" <<NumberOfCallersOnStart ()<<std::endl;
