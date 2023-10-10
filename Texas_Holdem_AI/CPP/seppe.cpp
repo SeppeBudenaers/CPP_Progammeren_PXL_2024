@@ -7,11 +7,26 @@ namespace PXL2023
     {
         return "Seppe";
     }
+    bool seppe::IsFirstBet(){
+        bool FirstBet = false;
+        if (getBet()<= getGame()->getBlind() || (getGame()->getDistanceToDealer(this) == 2 && getBet() == getGame()->getBlind()*2)){
+            FirstBet = true;
+        }
+
+        return FirstBet;
+    }
+    int seppe::Stage(){
+        if(getTable()->isPreFlop()){return PREFLOP;}
+        else if(getTable()->isFlop()){return POSTFLOP;}
+        else if(getTable()->isTurn()){return TURN;}
+        else if(getTable()->isRiver()){return RIVER;}
+        else return 5;
+    }
 
     int seppe::PreflopFiltering()
     {
         //initss
-        int HandSeppe = 0;
+        int Hand = 0;
         int LutSuited [14][14] = {
             {HIGH_HAND,LOW_HAND,LOW_HAND,LOW_HAND,LOW_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,MEDIUM_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND,HIGH_HAND}, //ace
             {LOW_HAND,LOW_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,UNPLAYABLE_HAND,LOW_HAND,LOW_HAND},//two
@@ -57,33 +72,33 @@ namespace PXL2023
         {
             if(fliphand)
             {
-                HandSeppe = LutSuited[getHand().getSecondCard()->getRank()-1][getHand().getFirstCard()->getRank()-1];
+                Hand = LutSuited[getHand().getSecondCard()->getRank()-1][getHand().getFirstCard()->getRank()-1];
             }
             else
             {
-                HandSeppe = LutSuited[getHand().getFirstCard()->getRank()-1][getHand().getSecondCard()->getRank()-1];
+                Hand = LutSuited[getHand().getFirstCard()->getRank()-1][getHand().getSecondCard()->getRank()-1];
             }
         }
         else // not suited
         {
             if(fliphand)
             {
-                HandSeppe = LutNotSuited[getHand().getSecondCard()->getRank()-1][getHand().getFirstCard()->getRank()-1];
+                Hand = LutNotSuited[getHand().getSecondCard()->getRank()-1][getHand().getFirstCard()->getRank()-1];
             }
             else
             {
-                HandSeppe = LutNotSuited[getHand().getFirstCard()->getRank()-1][getHand().getSecondCard()->getRank()-1];
+                Hand = LutNotSuited[getHand().getFirstCard()->getRank()-1][getHand().getSecondCard()->getRank()-1];
             }
         }
 
-        return HandSeppe;
+        return Hand;
     }
 
     int seppe::NumberOfCallersOnStart ()
     {
-        int total = -1;
+        int total = 0;
 
-        if (getBet()<= getGame()->getBlind() || (getGame()->getDistanceToDealer(this) == 2 && getBet() == getGame()->getBlind()*2))
+        if (IsFirstBet())
         {
             unsigned int CurrentBet = getGame()->getBlind()*2;
             for (int i = 0; i < getGame()->getPlayers().size(); i++)
@@ -110,6 +125,32 @@ namespace PXL2023
 
     int seppe::willYouRaise( unsigned int totalBet )
     {
+        STAGE GameState = STAGE(Stage());
+        switch( instance ) // settings
+        {
+        case 0:
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        }
+        switch (GameState) {
+        case PREFLOP:
+
+            break;
+        case POSTFLOP:
+
+            break;
+        case TURN:
+
+            break;
+        case RIVER:
+
+            break;
+        }
         std::cout <<"number of calls this round" <<NumberOfCallersOnStart ()<<std::endl;
         return( 0 );
     }

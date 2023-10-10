@@ -8,16 +8,26 @@ class seppe : public Player //seppe is Player
 {
 public:
     seppe( unsigned char instance = 0 )	: Player(instance)	{}
-    const char* getName( void ) const						; //{ return "Bart"; }
+    const char* getName( void ) const						;
     int willYouRaise( unsigned int totalBet )				;
 private:
-    enum HAND_SEPPE
+    enum HAND
     {
         UNPLAYABLE_HAND = 0,
         LOW_HAND,
         MEDIUM_HAND,
         HIGH_HAND,
     };
+    enum STAGE
+    {
+        PREFLOP = 0,
+        POSTFLOP = 3,
+        TURN = 4,
+        RIVER = 5
+    };
+
+    bool IsFirstBet();
+    int Stage();
     int PreflopFiltering();
     int NumberOfCallersOnStart ();
 };
