@@ -13,7 +13,7 @@ EQ            = =
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DUNICODE -D_UNICODE -DWIN32 -DMINGW_HAS_SECURE_API=1 -DFULL_PRINT -DDEBUG_PRINT -DQT_QML_DEBUG
+DEFINES       = -DUNICODE -D_UNICODE -DWIN32 -DMINGW_HAS_SECURE_API=1 -DQT_QML_DEBUG
 CFLAGS        = -fno-keep-inline-dllexport -g -Wall -Wextra -Wextra $(DEFINES)
 CXXFLAGS      = -fno-keep-inline-dllexport -g -Wall -Wextra -Wextra -fexceptions -mthreads $(DEFINES)
 INCPATH       = -I../CPP -I. -I../../../../Qt/6.5.3/mingw_64/mkspecs/win32-g++ 
@@ -202,13 +202,13 @@ debug/poker_rank.o: ../CPP/poker_rank.cpp ../CPP/poker_rank.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\poker_rank.o ..\CPP\poker_rank.cpp
 
 debug/seppe.o: ../CPP/seppe.cpp ../CPP/seppe.h \
+		../CPP/game.h \
 		../CPP/player.h \
 		../CPP/hand.h \
 		../CPP/card.h \
 		../CPP/table.h \
 		../CPP/poker_rank.h \
 		../CPP/playerid.h \
-		../CPP/game.h \
 		../CPP/deck.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\seppe.o ..\CPP\seppe.cpp
 
