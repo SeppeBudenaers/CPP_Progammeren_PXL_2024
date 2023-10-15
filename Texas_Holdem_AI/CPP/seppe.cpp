@@ -8,15 +8,8 @@ namespace PXL2023
     {
         return "Seppe";
     }
-    bool seppe::IsFirstBet(){
-        bool FirstBet = false;
-        if (getBet()<= getGame()->getBlind() || (getGame()->getDistanceToDealer(this) == 2 && getBet() == getGame()->getBlind()*2)){
-            FirstBet = true;
-        }
 
-        return FirstBet;
-    }
-
+    //General Game Logic
     int seppe::Stage(){
         if(getTable()->isPreFlop()){return PREFLOP;}
         else if(getTable()->isFlop()){return POSTFLOP;}
@@ -25,7 +18,55 @@ namespace PXL2023
         else return 5;
     }
 
-    int seppe::PreflopFiltering()
+    //Bluffing Logic
+    bool seppe::Bluffing(int BluffPercentage)
+    {
+        if(BluffPercentage <= 0)
+        {
+            if((rand()%BluffPercentage) == 0){return true;}
+            else{return false;}
+        }
+        else {return false;}
+    }
+
+    //PreFlop Logic
+    int seppe::NumberOfCallersOnStart ()
+    {
+        int total = 0;
+
+        if (IsFirstBet())
+        {
+            unsigned int CurrentBet = getGame()->getBlind()*2;
+            for (size_t i = 0; i < getGame()->getPlayers().size(); i++)
+            {
+                Player* PlayerAtTable = getGame()->getPlayers().at((getGame()->getDealerLocation()+3+i)%getGame()->getPlayers().size());
+                if (PlayerAtTable == this)
+                {
+                    break;
+                }
+
+                if (PlayerAtTable->getBet() == CurrentBet)
+                {
+                    total++;
+                }
+                else if (PlayerAtTable->getBet() > CurrentBet)
+                {
+                    CurrentBet = PlayerAtTable->getBet();
+                }
+
+            }
+        }
+        return total;
+    }
+    bool seppe::IsFirstBet(){
+        bool FirstBet = false;
+        if (getBet()<= getGame()->getBlind() || (getGame()->getDistanceToDealer(this) == 2 && getBet() == getGame()->getBlind()*2)){
+            FirstBet = true;
+        }
+
+        return FirstBet;
+    }
+    int seppe::PreFlopFiltering()
     {
         //initss
         int Hand = 0;
@@ -95,47 +136,72 @@ namespace PXL2023
 
         return Hand;
     }
-
-    int seppe::NumberOfCallersOnStart ()
+    int seppe::PreFlopBetting(int Hand, unsigned int EarlyPosition, unsigned int MidPosition ,float FoldBarrier,int BluffPercentage, unsigned int AllInPercentage, unsigned int totalBet)
     {
-        int total = 0;
+        int Bet = 0;
+        unsigned int BigBlind = (getGame()->getBlind()*2);
 
-        if (IsFirstBet())
-        {
-            unsigned int CurrentBet = getGame()->getBlind()*2;
-            for (size_t i = 0; i < getGame()->getPlayers().size(); i++)
-            {
-                Player* PlayerAtTable = getGame()->getPlayers().at((getGame()->getDealerLocation()+3+i)%getGame()->getPlayers().size());
-                if (PlayerAtTable == this)
+            if(((getGame()->getDistanceToDealer(this)-3)%getGame()->getPlayers().size())>= EarlyPosition){
+                if(Hand >= HIGH_HAND)
                 {
-                    break;
+                    if(getChips()<(20 * BigBlind)){Bet = (2 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                    else if ((20 * BigBlind) <= getChips()<(35 * BigBlind)){Bet = (2.25 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                    else if ((35 * BigBlind) <= getChips()<(60 * BigBlind)){Bet = (2.5 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                    else{Bet = (2.75 * BigBlind) + (NumberOfCallersOnStart() * 1);}
                 }
-
-                if (PlayerAtTable->getBet() == CurrentBet)
-                {
-                    total++;
-                }
-                else if (PlayerAtTable->getBet() > CurrentBet)
-                {
-                    CurrentBet = PlayerAtTable->getBet();
-                }
-
+                else{Fold = true;}
             }
-        }
-        return total;
+            else if(((getGame()->getDistanceToDealer(this)-3)%getGame()->getPlayers().size())>= MidPosition){
+                if(Hand >= MEDIUM_HAND)
+                {
+                    if(getChips()<(20 * BigBlind)){Bet = (2 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                    else if ((20 * BigBlind) <= getChips()<(35 * BigBlind)){Bet = (2.25 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                    else if ((35 * BigBlind) <= getChips()<(60 * BigBlind)){Bet = (2.5 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                    else{Bet = (2.75 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                }
+                else{Fold = true;}
+            }
+            else
+            {
+                if(Hand >= LOW_HAND)
+                {
+                    if(getChips()<(20 * BigBlind)){Bet = (2 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                    else if ((20 * BigBlind) <= getChips()<(35 * BigBlind)){Bet = (2.25 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                    else if ((35 * BigBlind) <= getChips()<(60 * BigBlind)){Bet = (2.5 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                    else{Bet = (2.75 * BigBlind) + (NumberOfCallersOnStart() * 1);}
+                }
+                else{Fold = true;}
+            }
+
+            if(Fold && (!Bluffed))
+            {
+                if(getBet()>= (getChips() * FoldBarrier)){return CHECK;}
+                else{return FOLD;}
+            }
+            else
+            {
+                if(Bluffing(BluffPercentage))
+                {
+                    Bluffed = true;
+                    return ALLIN;
+                }
+                else
+                {
+                    if((Bet * 100)/getChips() >= AllInPercentage)
+                    {
+                        return ALLIN;
+                    }
+                    else if((Bet - totalBet) >= 0)
+                    {
+                        return Bet - totalBet;
+                    }
+                    else {return CHECK;}
+                }
+            }
     }
 
-    bool seppe::Bluffing(int BluffPercentage)
-    {
-        if(BluffPercentage <= 0)
-        {
-            if((rand()%BluffPercentage) == 0){return true;}
-            else{return false;}
-        }
-        else {return false;}
-    }
-
-    bool seppe::OtherSeppeAtTable()
+    //Colluding Logic
+    bool seppe::OtherSeppeAtTable() //Checking for other instances of Seppe
     {
         int TotalSeppe = 0;
         for(Player *PlayerAtTable :getGame()->getPlayers())
@@ -156,8 +222,7 @@ namespace PXL2023
         return false;
         }
     }
-
-    int seppe::LastBetOfOtherSeppe()
+    int seppe::DataViaChips() //Data recieve van mijn eigen instances
     {
         int PreviousBet = 0;
         int PresentBet = 0;
@@ -176,13 +241,14 @@ namespace PXL2023
         return -1;
     }
 
+    //Main function
     int seppe::willYouRaise( unsigned int totalBet )
     {
 
         // initialization
-        bool Fold = false;
-        unsigned int BigBlind = getGame()->getBlind() *2;
-        int Bet = 0;
+        Fold = false;
+        STAGE GameState = STAGE(Stage());
+        int  Hand = PreFlopFiltering();
 
         // initialization of settings
         float FoldBarrier = 0.45;
@@ -219,100 +285,31 @@ namespace PXL2023
             break;
         }
 
-        STAGE GameState = STAGE(Stage());
-        int  Hand = PreflopFiltering();
-
         switch (GameState) // game state logic
         {
         case PREFLOP:
             if(IsFirstBet()){
-                if(OtherSeppeAtTable())
+                if(OtherSeppeAtTable()) //sending Data Via chips
                 {
-                    return PreflopFiltering() + 1;
+                    return PreFlopFiltering() + 1;
                 }
-                else
+                else //standart betting
                 {
-                    if(((getGame()->getDistanceToDealer(this)-3)%getGame()->getPlayers().size())>= EarlyPosition){
-                        if(Hand >= HIGH_HAND)
-                        {
-                            if(getChips()<(20 * BigBlind)){Bet = (2 * BigBlind) + (NumberOfCallersOnStart() * 1);}
-                            else if ((20 * BigBlind) <= getChips()<(35 * BigBlind)){Bet = (2.25 * BigBlind) + (NumberOfCallersOnStart() * 1);}
-                            else if ((35 * BigBlind) <= getChips()<(60 * BigBlind)){Bet = (2.5 * BigBlind) + (NumberOfCallersOnStart() * 1);}
-                            else{Bet = (2.75 * BigBlind) + (NumberOfCallersOnStart() * 1);}
-                        }
-                        else{Fold = true;}
-                    }
-                    else if(((getGame()->getDistanceToDealer(this)-3)%getGame()->getPlayers().size())>= MidPosition){
-                        if(Hand >= MEDIUM_HAND)
-                        {
-                            if(getChips()<(20 * BigBlind)){Bet = (2 * BigBlind) + (NumberOfCallersOnStart() * 1);}
-                            else if ((20 * BigBlind) <= getChips()<(35 * BigBlind)){Bet = (2.25 * BigBlind) + (NumberOfCallersOnStart() * 1);}
-                            else if ((35 * BigBlind) <= getChips()<(60 * BigBlind)){Bet = (2.5 * BigBlind) + (NumberOfCallersOnStart() * 1);}
-                            else{Bet = (2.75 * BigBlind) + (NumberOfCallersOnStart() * 1);}
-                        }
-                        else{Fold = true;}
-                    }
-                    else
-                    {
-                        if(Hand >= LOW_HAND)
-                        {
-                            if(getChips()<(20 * BigBlind)){Bet = (2 * BigBlind) + (NumberOfCallersOnStart() * 1);}
-                            else if ((20 * BigBlind) <= getChips()<(35 * BigBlind)){Bet = (2.25 * BigBlind) + (NumberOfCallersOnStart() * 1);}
-                            else if ((35 * BigBlind) <= getChips()<(60 * BigBlind)){Bet = (2.5 * BigBlind) + (NumberOfCallersOnStart() * 1);}
-                            else{Bet = (2.75 * BigBlind) + (NumberOfCallersOnStart() * 1);}
-                        }
-                        else{Fold = true;}
-                    }
+                   return PreFlopBetting(Hand,EarlyPosition,MidPosition,FoldBarrier,BluffPercentage,AllInPercentage,totalBet);
                 }
             }
             else
             {
-                if(OtherSeppeAtTable())
+                if(OtherSeppeAtTable())//recieving Data Via chips
                 {
-                     std::cout<<"DEBUG : other seppe hand : "<< LastBetOfOtherSeppe() - 1 << std::endl;
-                     std::cout<<"DEBUG : My hand: "<< PreflopFiltering() << std::endl;
-                     if((LastBetOfOtherSeppe()-1) >= HIGH_HAND ||(PreflopFiltering() == HIGH_CARD))
-                    {
-                        std::cout<<"one of us has a high hand : "<< LastBetOfOtherSeppe() -1 << " "<< PreflopFiltering() << std::endl;
-                        return ALLIN;
-                    }
-                    else
-                    {
-                        std::cout<<"NO HIGH HAND : "<< LastBetOfOtherSeppe() -1<< " "<< PreflopFiltering() << std::endl;
-                        return CHECK;
-                    }
+                    if((DataViaChips()-1) == HIGH_HAND ||(PreFlopFiltering() == HIGH_CARD)){return ALLIN;}
+                    else{return PreFlopBetting(Hand,EarlyPosition,MidPosition,FoldBarrier,BluffPercentage,AllInPercentage,totalBet);}
                 }
+                else{return CHECK;}
             }
-
-            if(Fold && (!Bluffed))
-            {
-                if(getBet()>= (getChips() * FoldBarrier)){return CHECK;}
-                else{return FOLD;}
-            }
-            else
-            {
-                if(Bluffing(BluffPercentage))
-                {
-                    Bluffed = true;
-                    return ALLIN;
-                }
-                else
-                {
-                    if((Bet * 100)/getChips() >= AllInPercentage)
-                    {
-                        return ALLIN;
-                    }
-                    else if((Bet - totalBet) >= 0)
-                    {
-                        return Bet - totalBet;
-                    }
-                    else {return CHECK;}
-                }
-            }
-
             break;
+
         case POSTFLOP:
-            LastBetOfOtherSeppe();
             return CHECK;
             break;
         case TURN:
@@ -323,5 +320,5 @@ namespace PXL2023
             break;
         }
         return( 0 );
-        }
     }
+}

@@ -14,6 +14,7 @@ SOURCES += main.cpp \
 	king_of_aces.cpp \
 	poker_rank.cpp \
 	seppe.cpp \
+        dries.cpp\
 	table.cpp \
 	tournament.cpp
 
@@ -28,6 +29,7 @@ HEADERS += \
 	playerid.h \
 	poker_rank.h \
 	seppe.h \
+        dries.h\
 	table.h \
 	tournament.h \
 	shootout.h

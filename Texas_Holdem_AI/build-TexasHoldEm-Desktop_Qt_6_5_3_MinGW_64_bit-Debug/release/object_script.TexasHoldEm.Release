@@ -6,5 +6,6 @@ release/hand.o
 release/king_of_aces.o
 release/poker_rank.o
 release/seppe.o
+release/dries.o
 release/table.o
 release/tournament.o
