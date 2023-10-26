@@ -7,5 +7,6 @@ debug/king_of_aces.o
 debug/poker_rank.o
 debug/seppe.o
 debug/dries.o
+debug/kobed.o
 debug/table.o
 debug/tournament.o

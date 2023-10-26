@@ -3,10 +3,12 @@
 
 #include "shootout.h"
 #include "tournament.h"
+
 #include "king_of_aces.h"
 #include "bart.h"
 #include "seppe.h"
 #include "dries.h"
+#include "kobed.h"
 
 using namespace std;
 
@@ -21,11 +23,12 @@ int main( int argumentCount, char * argumentVector[] )
 		tour.registerPlayer( new PXL2022::Bart( i ), PXL_2021 );
         tour.registerPlayer( new PXL2023::seppe( i ), PXL_2023_SEPPE);
         tour.registerPlayer( new PXL2023::Dries( i ), PXL_2023_DRIES);
+        tour.registerPlayer( new PXL2023::KobeD( i ), PXL_2023_KOBE);
 	}
 
 	if( argumentCount > 1 && ( strcmp( argumentVector[argumentCount-1], "stats" ) == 0 ) )
 	{
-        runStatistics( tour, 1000);
+        runStatistics( tour, 100);
 	}
 	else
 	{

@@ -165,6 +165,7 @@ enum PlayerID
 	PXL_2023,
     PXL_2023_SEPPE,
     PXL_2023_DRIES,
+    PXL_2023_KOBE,
 	MAX_PLAYER_ID
 };
 

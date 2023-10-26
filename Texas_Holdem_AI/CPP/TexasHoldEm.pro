@@ -15,6 +15,7 @@ SOURCES += main.cpp \
 	poker_rank.cpp \
 	seppe.cpp \
         dries.cpp\
+        kobed.cpp\
 	table.cpp \
 	tournament.cpp
 
@@ -30,6 +31,7 @@ HEADERS += \
 	poker_rank.h \
 	seppe.h \
         dries.h\
+        kobed.h\
 	table.h \
 	tournament.h \
 	shootout.h
